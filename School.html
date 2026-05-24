@@ -83,7 +83,7 @@
 
 <script>
   // --- GAS接続設定 ---
-  const GAS_URL = "ここにあなたのGASのデプロイURLを貼る"; 
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyzA1pj3nGIGOCyA16R8Fuwc-4bFpFCchD41WEAn5j1DKBajPApyNkYQK1BU7VoKEFZ-w/exec"; 
 
   async function callGas(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
