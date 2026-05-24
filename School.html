@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* CSSはそのまま */
     :root { --primary: #5851db; --bg: #f8fafc; --header-bg: #1e293b; --card-bg: #ffffff; --border: #eef2f6; --text-main: #1e293b; --text-sub: #64748b; --badge-bg: #eff6ff; --badge-text: #2563eb; --pink: #db2777; }
     #landing-box, #setup-box, #complete-box, #login-box, #app-box, .modal-overlay, #save-loader { display: none; }
     body.theme-glass { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); background-attachment: fixed; }
@@ -31,8 +30,7 @@
     .dashboard-card { background: #fff; border-radius: 20px; padding: 25px; display: flex; align-items: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; color: #333; }
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: none; justify-content: center; align-items: center; }
     .modal { background: white; padding: 35px; border-radius: 25px; width: 600px; max-height: 85vh; overflow-y: auto; color: #333; }
-    #save-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: var(--primary); font-weight: bold; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+    .nav-btn { padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
@@ -56,11 +54,14 @@
       <div style="display:flex; align-items:center;">
         <div style="font-size:11px; margin-right:25px; text-align:left;"><b id="h-school-name">---</b><br><small id="h-school-no">No.---</small></div>
         <div id="digital-clock" class="digital-clock">00:00:00</div>
-        <div id="nav-controls" style="margin-left:20px;"><button onclick="move(-1)" class="nav-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid #fff; padding:5px 10px; border-radius:5px;">＜</button><span id="date-label" style="margin:0 15px; font-weight:bold; min-width:130px; text-align:center;"></span><button onclick="move(1)" class="nav-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid #fff; padding:5px 10px; border-radius:5px;">＞</button></div>
+        <div id="nav-controls" style="margin-left:20px;"><button onclick="move(-1)" class="nav-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid #fff;">＜</button><span id="date-label" style="margin:0 15px; font-weight:bold;"></span><button onclick="move(1)" class="nav-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid #fff;">＞</button></div>
       </div>
       <div>
-        <button id="btn-day" onclick="changeV('day')" class="nav-btn">日</button><button id="btn-week" onclick="changeV('week')" class="nav-btn">週</button>
-        <button id="btn-task" onclick="changeV('task')" class="nav-btn" style="background:#f43f5e; border:none; color:#fff; margin-left:10px;">提出状況</button>
+        <button onclick="changeV('day')" class="nav-btn">日</button><button onclick="changeV('week')" class="nav-btn">週</button>
+        <button onclick="changeV('task')" class="nav-btn" style="background:#f43f5e; border:none; color:#fff; margin-left:10px;">提出状況</button>
+        <!-- 追加ボタン -->
+        <button onclick="window.open('https://script.google.com/macros/s/AKfycbxGhayJqPsF50e4F_l_Y-xtb4TdrqZTLfSjcySPs_UMy0AgxifL1r4uhMgpyZ0nWHzoQQ/exec', '_blank')" class="nav-btn" style="background:#4f46e5; border:none; color:#fff; margin-left:10px;"><i class="fa-solid fa-link"></i> ポータル</button>
+        
         <button id="btn-admin-status" onclick="changeV('admin-status')" class="nav-btn" style="background:#10b981; border:none; color:#fff; display:none; margin-left:10px;">状況確認</button>
         <button onclick="location.reload()" class="nav-btn" style="background:#ef4444; border:none; margin-left:15px;"><i class="fa-solid fa-power-off"></i></button>
       </div>
@@ -74,7 +75,7 @@
           <div style="margin-top:15px; padding:12px; background:rgba(0,0,0,0.05); border-radius:12px;"><label style="font-size:11px;">クラス追加</label><input type="text" id="nc-name" class="input-ui" placeholder="例: 1年A組"><button class="btn-pink" onclick="onAddClass()">追加</button><div id="side-class-list" style="font-size:11px; margin-top:10px;"></div></div>
         </div>
       </div>
-      <div id="view-area" class="view-area"><div id="save-loader"><div class="spinner"></div>処理中...</div></div>
+      <div id="view-area" class="view-area"></div>
     </div>
   </div>
 
@@ -82,7 +83,7 @@
 
 <script>
   // --- GAS接続設定 ---
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyzA1pj3nGIGOCyA16R8Fuwc-4bFpFCchD41WEAn5j1DKBajPApyNkYQK1BU7VoKEFZ-w/exec"; 
+  const GAS_URL = "ここにあなたのGASのデプロイURLを貼る"; 
 
   async function callGas(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
@@ -92,6 +93,7 @@
   let db=[], tasks=[], appConfig={}, focusD=new Date(), mode='week', adminSubMode='menu', userRole="生徒", studentClass="", currentLoginId="", currentSchoolNo="", selectedSubject="";
   let currentStudentName = localStorage.getItem("studentName") || "";
   let currentStudentAttNo = localStorage.getItem("studentAttNo") || "";
+  const PORTAL_URL = "https://script.google.com/macros/s/AKfycbxGhayJqPsF50e4F_l_Y-xtb4TdrqZTLfSjcySPs_UMy0AgxifL1r4uhMgpyZ0nWHzoQQ/exec";
 
   window.onload = async () => { 
     const s = await callGas('getAppStatus');
@@ -103,8 +105,6 @@
   function showSection(s){ document.querySelectorAll('.box-ui, #app-box, .modal-overlay').forEach(el=>el.style.display='none'); const t=document.getElementById(s+'-box'); if(t) t.style.display=(s==='app'?'flex':'block'); }
   function openM(m){ document.getElementById('overlay-'+m).style.display='flex'; if(m==='subject') loadSubjects(); }
   function closeM(){ document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
-
-  window.addEventListener('keydown',(e)=>{ if(e.ctrlKey&&e.altKey&&e.key.toLowerCase()==='i') document.getElementById('role-selector-container').style.display='block'; });
 
   async function handleSchoolNoInput(val){ 
     if(val.length===6) {
@@ -130,55 +130,51 @@
   }
 
   function applyPerms(){ 
-    const isA=(userRole==='管理者'), isS=(userRole==='生徒'); 
-    document.getElementById('admin-sidebar').style.display=isS?'none':'block'; 
-    document.getElementById('side-admin-only').style.display=isA?'block':'none'; 
-    document.getElementById('btn-admin-status').style.display=(isA || userRole==='教員'?'inline-block':'none'); 
+    const isTOrA=(userRole==='管理者' || userRole==='教員'); 
+    document.getElementById('admin-sidebar').style.display=(userRole==='生徒'?'none':'block'); 
+    document.getElementById('side-admin-only').style.display=(userRole==='管理者'?'block':'none'); 
+    document.getElementById('btn-admin-status').style.display=(isTOrA?'inline-block':'none'); 
   }
   
   async function refresh(){
     appConfig = await callGas('getFullAppData', { sn: currentSchoolNo });
     document.getElementById('sidebar-class-filter').innerHTML=(userRole!=='生徒'?'<option value="すべて">すべて</option>':'')+appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
-    if(!selectedSubject && appConfig.subjectList.length) selectedSubject = appConfig.subjectList[0];
-    
     db = await callGas('getScheduleData', { sn: currentSchoolNo });
-    tasks = await callGas('getSubmissionData', { sn: currentSchoolNo, studentName: currentStudentName, className: studentClass });
     render();
   }
-
-  async function renderTaskView() {
-    const area = document.getElementById('view-area');
-    if (userRole === '生徒' && !currentStudentName) {
-      let attOptions = ''; for(let i=1;i<=100;i++) attOptions += `<option value="${i}">${i}</option>`;
-      area.innerHTML = `<div class="box-ui" style="width:100%; max-width:400px; margin:20px auto; text-align:left;"><h3>利用登録</h3><label style="font-size:11px;">出席番号</label><select id="reg-att-no" class="input-ui">${attOptions}</select><label style="font-size:11px;">氏名</label><input type="text" id="reg-name" class="input-ui" placeholder="例: 山田 太郎"><label style="font-size:11px;">メールアドレス</label><input type="email" id="reg-email" class="input-ui"><label style="font-size:11px;">パスワード</label><input type="password" id="reg-pw" class="input-ui"><button class="btn-blue" onclick="onRegisterStudent()">登録して保存</button></div>`;
-      return;
-    }
-    area.innerHTML = '<div>読込中...</div>';
-    const t = await callGas('getSubmissionData', { sn: currentSchoolNo, studentName: currentStudentName, className: studentClass });
-    tasks = t;
-    let h = `<div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;"><span><b>${userRole==='生徒'?'【'+currentStudentAttNo+'番】 '+currentStudentName+' さん':'全体確認'}</b></span>${userRole==='生徒'?'<button onclick="clearIdentity()" style="font-size:10px; color:red; border:none; background:none; cursor:pointer;">再登録</button>':''}</div><div class="menu-grid">`;
-    tasks.forEach(tk => { const isD=(tk.status==='完了'); h += `<div class="dashboard-card" onclick="onToggleStatus('${tk.taskKey}','${tk.status}')"><div style="font-size:24px; margin-right:15px; color:${isD?'green':'red'};"><i class="fa-solid ${isD?'fa-check-circle':'fa-circle'}"></i></div><div><b>${tk.subject}</b><br><small>締切:${tk.date}</small></div></div>`; });
-    area.innerHTML = h + '</div>';
-  }
-
-  async function onRegisterStudent() {
-    const name=document.getElementById('reg-name').value, att=document.getElementById('reg-att-no').value, email=document.getElementById('reg-email').value, pw=document.getElementById('reg-pw').value;
-    const res = await callGas('saveStudentIdentity', { sn: currentSchoolNo, className: studentClass, name, attNo: att, pw, email });
-    currentStudentName=res.name; currentStudentAttNo=res.attNo;
-    localStorage.setItem("studentName", res.name); localStorage.setItem("studentAttNo", res.attNo);
-    render();
-  }
-
-  function clearIdentity(){ if(confirm('再登録しますか？')){ localStorage.removeItem("studentName"); localStorage.removeItem("studentAttNo"); currentStudentName=""; render(); } }
 
   function render(){
     const area=document.getElementById('view-area'), f=(userRole==='生徒'?studentClass:document.getElementById('sidebar-class-filter').value);
-    if(mode === 'task') { renderTaskView(); return; }
+    document.getElementById('date-label').innerText = focusD.toLocaleDateString();
+
+    if(mode === 'admin-status') {
+      area.innerHTML = `
+        <div class="menu-grid">
+          <div class="dashboard-card" onclick="window.open('${PORTAL_URL}', '_blank')">
+            <div style="font-size:24px; margin-right:15px; color:#4f46e5;"><i class="fa-solid fa-external-link-alt"></i></div>
+            <div><b>外部ポータルを開く</b><br><small>別タブで開きます</small></div>
+          </div>
+          <div class="dashboard-card" style="opacity:0.5;">
+            <div style="font-size:24px; margin-right:15px;"><i class="fa-solid fa-users"></i></div>
+            <div><b>状況確認（開発中）</b><br><small>名簿連動表示</small></div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    if(mode === 'task') {
+      area.innerHTML = '<h3>提出状況</h3><div class="menu-grid">取得中...</div>';
+      renderTaskView();
+      return;
+    }
     
     let h='<table>'; const curDs = focusD.toLocaleDateString('sv-SE');
     if(mode==='day'){
       h+='<tr><th style="width:60px;">限</th><th>予定</th></tr>';
-      for(let p=1;p<=appConfig.periodCount;p++){ const its=db.filter(x=>x.date===curDs&&String(x.period)===String(p)&&(f==='すべて'||x.targetClass===f)); h+=`<tr><td><b>${p}</b></td><td>${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td></tr>`; }
+      for(let p=1;p<=appConfig.periodCount;p++){ 
+        const its=db.filter(x=>x.date===curDs&&String(x.period)===String(p)&&(f==='すべて'||x.targetClass===f)); 
+        h+=`<tr><td><b>${p}</b></td><td>${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td></tr>`; 
+      }
     } else if(mode==='week'){
       const start=new Date(focusD); start.setDate(start.getDate()-start.getDay()+(start.getDay()===0?-6:1));
       h+='<tr><th></th>'; const dts=[]; for(let i=0;i<5;i++){ let d=new Date(start); d.setDate(start.getDate()+i); let s=d.toLocaleDateString('sv-SE'); dts.push(s); h+=`<th>${d.getMonth()+1}/${d.getDate()}</th>`; }
@@ -187,12 +183,16 @@
     area.innerHTML = h+'</table>';
   }
 
-  async function onToggleStatus(tk,st){ if(userRole!=='生徒')return; await callGas('toggleTaskStatus', { sn: currentSchoolNo, tk, studentName: currentStudentName, st }); refresh(); }
+  async function renderTaskView() {
+    const t = await callGas('getSubmissionData', { sn: currentSchoolNo, studentName: currentStudentName, className: studentClass });
+    let h = `<div class="menu-grid">`;
+    t.forEach(tk => { const isD=(tk.status==='完了'); h += `<div class="dashboard-card" onclick="onToggleStatus('${tk.taskKey}','${tk.status}')"><div style="font-size:24px; margin-right:15px; color:${isD?'green':'red'};"><i class="fa-solid ${isD?'fa-check-circle':'fa-circle'}"></i></div><div><b>${tk.subject}</b><br><small>締切:${tk.date}</small></div></div>`; });
+    document.getElementById('view-area').innerHTML = h + '</div>';
+  }
+
+  async function onToggleStatus(tk,st){ if(userRole!=='生徒')return; await callGas('toggleTaskStatus', { sn: currentSchoolNo, tk, studentName: currentStudentName, st }); renderTaskView(); }
   function move(s){ focusD.setDate(focusD.getDate()+s*(mode==='week'?7:1)); render(); }
   function changeV(v){ mode=v; render(); }
-  
-  async function onAddSubject(){ await callGas('addSubject', { sn: currentSchoolNo, name: document.getElementById('new-sub-name').value }); loadSubjects(); refresh(); }
-  async function loadSubjects(){ const list = await callGas('getFullAppData', { sn: currentSchoolNo }); document.getElementById('sub-list-box').innerHTML=list.subjectList.map(s=>`<div>${s}</div>`).join(''); }
   async function onAddClass(){ await callGas('addClass', { sn: currentSchoolNo, n: document.getElementById('nc-name').value }); refresh(); }
   async function doSetup(){ 
     const res = await callGas('processInitialSetup', { schoolName:document.getElementById('s-school').value, adminId:document.getElementById('s-admin-id').value, adminPw:document.getElementById('s-admin-pw').value });
