@@ -4,34 +4,39 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --primary: #4285f4; --bg: #f8fafc; --header-bg: #1e293b; --border: #e2e8f0; --pink: #db2777; }
-    body { margin: 0; font-family: sans-serif; background: var(--bg); color: #333; overflow: hidden; }
+    :root { --primary: #4285f4; --bg: #f8fafc; --header-bg: #1e293b; --border: #e2e8f0; --pink: #db2777; --purple: #8b5cf6; }
+    body { margin: 0; font-family: sans-serif; background: var(--bg); color: #333; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
     
-    /* ログイン画面（中央カード） */
-    #login-screen { position: fixed; inset: 0; background: #f8fafc; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-    .login-card { background: white; padding: 40px; border-radius: 16px; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+    /* ログインカード */
+    #login-screen { position: fixed; inset: 0; background: #f1f5f9; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+    .login-card { background: white; padding: 40px; border-radius: 16px; width: 340px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
 
     /* メインアプリ */
-    #app-box { display: none; flex-direction: column; height: 100vh; }
-    .header { background: var(--header-bg); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+    #app-box { display: none; flex-direction: column; width: 100vw; height: 100vh; background: white; }
+    .header { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
     .main-content { display: flex; flex: 1; overflow: hidden; }
     .sidebar { width: 300px; background: #f1f5f9; padding: 20px; overflow-y: auto; border-right: 1px solid var(--border); }
     .view-area { flex: 1; padding: 20px; overflow-y: auto; background: white; }
 
-    /* サイドバーUI */
+    /* UIパーツ */
     .sidebar-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
-    .sidebar-card label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #64748b; }
-    .input-ui { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
-    .btn-blue { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 8px; }
-    .btn-pink { width: 100%; padding: 12px; background: var(--pink); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .input-ui { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 8px; color: white; }
+    .btn-blue { background: var(--primary); }
+    .btn-purple { background: var(--purple); }
+    .btn-pink { background: var(--pink); }
+
+    /* テーブル */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
+    th { background: #f8fafc; font-size: 12px; color: #64748b; }
+    .row-label { font-weight: bold; width: 80px; }
+    .task-card { background: #fff1f2; color: #be123c; border-left: 3px solid #f43f5e; padding: 4px; font-size: 11px; text-align: left; margin-bottom: 2px; }
+    .card { background: #eff6ff; border-left: 4px solid var(--primary); padding: 5px; font-size: 12px; text-align: left; }
 
     /* モーダル */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999; display: none; justify-content: center; align-items: center; }
-    .modal { background: white; padding: 25px; border-radius: 15px; width: 550px; max-height: 85vh; overflow-y: auto; }
-    
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
-    .card { background: #eff6ff; border-left: 4px solid var(--primary); padding: 6px; font-size: 11px; margin-bottom: 2px; }
+    .modal { background: white; padding: 25px; border-radius: 15px; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
@@ -39,88 +44,115 @@
   <!-- ログイン画面 -->
   <div id="login-screen">
     <div class="login-card">
-      <h2 style="margin-top:0;">School Login</h2>
+      <h2 style="margin-bottom:20px;">School Login</h2>
       <input type="number" id="l-sn" class="input-ui" placeholder="学校番号" oninput="handleSchoolNoInput(this.value)">
-      <label style="font-size:12px; color:gray; display:block; margin-bottom:5px;">クラス選択</label>
-      <select id="uid-select" class="input-ui"></select>
-      <button class="btn-blue" onclick="doLogin()">ログイン</button>
-      <a onclick="location.reload()" style="cursor:pointer; font-size:13px; color:gray; display:block; margin-top:10px;">戻る</a>
+      
+      <!-- 隠しメニュー (Ctrl+Alt+i) -->
+      <div id="admin-mode-box" style="display:none; background:#fff0f0; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #ffccd5;">
+        <label style="font-size:11px; color:#db2777; font-weight:bold;">【管理モード】役割選択</label>
+        <select id="l-role" class="input-ui" onchange="onRoleChange()" style="margin-top:5px;">
+          <option value="生徒">生徒</option>
+          <option value="教員">教員</option>
+          <option value="管理者">管理者</option>
+        </select>
+      </div>
+
+      <div id="uid-select-wrapper">
+        <label style="font-size:12px; color:gray; display:block; margin-bottom:5px;">クラス選択</label>
+        <select id="uid-select" class="input-ui"></select>
+      </div>
+      <div id="uid-text-wrapper" style="display:none;">
+        <input type="text" id="uid-text" class="input-ui" placeholder="ユーザーID">
+      </div>
+
+      <input type="password" id="upw" class="input-ui" placeholder="パスワード">
+      <button class="btn btn-blue" onclick="doLogin()">ログイン</button>
+      <p style="font-size:11px; color:#999; margin-top:10px;">教員の方は Ctrl+Alt+i を押してください</p>
     </div>
   </div>
 
   <!-- メインアプリ -->
   <div id="app-box">
     <div class="header">
-      <div><b id="h-school-name">---</b> <small id="h-school-no">No.---</small></div>
-      <div id="clock">00:00:00</div>
-      <div><button onclick="location.reload()" style="background:red; color:white; border:none; border-radius:5px; padding:5px 15px; cursor:pointer;">Logout</button></div>
+      <div style="display:flex; align-items:center; gap:15px;">
+        <div><b id="h-school-name">---</b><br><small id="h-school-no">No.---</small></div>
+        <div id="clock" style="font-family:monospace; font-size:16px; background:rgba(255,255,255,0.1); padding:3px 8px; border-radius:4px;">00:00:00</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" style="width:auto; padding:5px 15px; margin:0; background:#475569;">週</button>
+        <button class="btn btn-pink" style="width:auto; padding:5px 15px; margin:0;">提出物一覧</button>
+        <button class="btn" style="width:auto; padding:5px 15px; margin:0; background:#ef4444;" onclick="location.reload()">Logout</button>
+      </div>
     </div>
     <div class="main-content">
       <div class="sidebar">
-        <div class="sidebar-card"><label>表示クラス</label><select id="class-filter" class="input-ui" onchange="render()"></select></div>
+        <div class="sidebar-card"><label>表示クラス選択</label><select id="class-filter" class="input-ui" onchange="render()"></select></div>
         
-        <!-- ショートカットボタン群 -->
-        <button class="btn-blue" onclick="openM('subject')">教科マネージャー</button>
-        <button class="btn-blue" onclick="alert('名簿管理画面へ')">名簿管理 (PW設定)</button>
-        <button class="btn-blue" onclick="openM('time')">時刻設定</button>
-        <button class="btn-blue" onclick="openM('user')">ユーザー管理</button>
+        <button class="btn btn-purple">制作へ連絡</button>
 
         <div class="sidebar-card">
           <label>▼提出物登録</label>
           <input type="date" id="t-date" class="input-ui">
           <input type="text" id="t-sub" class="input-ui" placeholder="科目名">
           <input type="text" id="t-con" class="input-ui" placeholder="内容">
-          <button class="btn-pink" onclick="onAddTask()">登録</button>
+          <button class="btn btn-pink" onclick="onAddTask()">登録</button>
         </div>
 
+        <button class="btn btn-blue" onclick="openM('time')">時刻・限数設定</button>
+        <button class="btn-purple btn" onclick="openM('user')">ユーザー管理</button>
+
         <div class="sidebar-card">
-          <label>クラス追加</label>
-          <input type="text" id="nc-name" class="input-ui" placeholder="例: 1年A組">
-          <button class="btn-pink" onclick="onAddClass()">追加</button>
+          <input type="text" id="nc-name" class="input-ui" placeholder="新クラス名">
+          <button class="btn btn-pink" onclick="onAddClass()">クラス追加</button>
         </div>
       </div>
       <div id="view-area" class="view-area"></div>
     </div>
   </div>
 
-  <!-- 教科管理モーダル -->
-  <div class="modal-overlay" id="overlay-subject"><div class="modal"><h3>教科管理</h3><input type="text" id="ns-name" class="input-ui" placeholder="新教科名"><button class="btn-blue" onclick="onAddSubject()">追加</button><div id="sub-list" style="margin-top:15px;"></div><button onclick="closeM()" class="btn-blue" style="background:gray; margin-top:20px;">閉じる</button></div></div>
-
-  <!-- 時刻設定モーダル -->
-  <div class="modal-overlay" id="overlay-time">
-    <div class="modal">
-      <h3>時刻設定</h3>
-      限数: <input type="number" id="tc-count" class="input-ui" value="6" oninput="genTimeRows()">
-      <table><thead><tr><th>限</th><th>普</th><th>短</th><th>特</th></tr></thead><tbody id="tc-tbody"></tbody></table>
-      <button class="btn-blue" onclick="onSaveTime()">保存</button>
-      <button onclick="closeM()" class="btn-blue" style="background:gray;">閉じる</button>
-    </div>
-  </div>
-
-  <!-- ユーザー管理モーダル -->
-  <div class="modal-overlay" id="overlay-user"><div class="modal"><h3>ユーザー管理</h3><input type="text" id="nu-id" class="input-ui" placeholder="ID"><input type="password" id="nu-pw" class="input-ui" placeholder="PW"><select id="nu-role" class="input-ui"><option value="教員">教員</option><option value="管理者">管理者</option></select><button class="btn-blue" onclick="onAddUser()">登録</button><div id="user-list" style="margin-top:15px;"></div><button onclick="closeM()" class="btn-blue" style="background:gray;">閉じる</button></div></div>
+  <!-- 各種モーダル -->
+  <div class="modal-overlay" id="overlay-time"><div class="modal"><h3>時刻設定</h3><button class="btn btn-blue" onclick="closeM()">閉じる</button></div></div>
+  <div class="modal-overlay" id="overlay-user"><div class="modal"><h3>ユーザー管理</h3><div id="user-list"></div><button class="btn btn-blue" onclick="closeM()">閉じる</button></div></div>
 
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxZail214EzRk40UY7jEsvq3GAjOLG-n2jXDCXEBpg5uMWX9Obg5i4hXDviMBdWGG76aw/exec"; 
+  // ★重要：デプロイしたURLを貼ってください
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby6zSkt-JBBxybLnBQX12VLyj9xONa2T2RCUKZczw2_HIKIGVvByJjxw_H-vtAZ5sSscw/exec"; 
+
+  // キーボードショートカット (Ctrl+Alt+i)
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'i') {
+      e.preventDefault();
+      const box = document.getElementById('admin-mode-box');
+      box.style.display = (box.style.display === 'none' ? 'block' : 'none');
+    }
+  });
 
   async function callGas(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
     return await res.json();
   }
 
-  let currentSn = "", appConfig = {}, db = [], focusD = new Date();
+  let currentSn = "", classList = [], schedule = [], tasks = [], periodCount = 6;
 
   async function handleSchoolNoInput(val) {
     if (val.length === 6) {
       const res = await callGas('getLoginConfig', { sn: val });
-      document.getElementById('uid-select').innerHTML = res.classList.map(c => `<option value="${c}">${c}</option>`).join('');
+      if(res.classList) document.getElementById('uid-select').innerHTML = res.classList.map(c => `<option value="${c}">${c}</option>`).join('');
     }
+  }
+
+  function onRoleChange() {
+    const r = document.getElementById('l-role').value;
+    document.getElementById('uid-select-wrapper').style.display = (r === '生徒' ? 'block' : 'none');
+    document.getElementById('uid-text-wrapper').style.display = (r === '生徒' ? 'none' : 'block');
   }
 
   async function doLogin() {
     const sn = document.getElementById('l-sn').value;
-    const id = document.getElementById('uid-select').value;
-    const res = await callGas('checkLogin', { sn, id, pw: "", role: "生徒" }); // 簡易ログイン
+    const role = document.getElementById('l-role').value;
+    const id = (role === '生徒') ? document.getElementById('uid-select').value : document.getElementById('uid-text').value;
+    const pw = document.getElementById('upw').value;
+    const res = await callGas('checkLogin', { sn, id, pw, role });
     if (res.success) {
       currentSn = sn;
       document.getElementById('login-screen').style.display = 'none';
@@ -132,61 +164,51 @@
   }
 
   async function refresh() {
-    appConfig = await callGas('getFullAppData', { sn: currentSn });
-    db = await callGas('getScheduleData', { sn: currentSn });
-    document.getElementById('class-filter').innerHTML = '<option value="すべて">すべて</option>' + appConfig.classList.map(c => `<option value="${c}">${c}</option>`).join('');
+    const app = await callGas('getFullAppData', { sn: currentSn });
+    const data = await callGas('getScheduleData', { sn: currentSn });
+    classList = app.classList;
+    schedule = data.schedule;
+    tasks = data.tasks;
+    periodCount = app.periodCount;
+    document.getElementById('class-filter').innerHTML = '<option value="すべて">すべて</option>' + classList.map(c => `<option value="${c}">${c}</option>`).join('');
     render();
   }
 
   function render() {
-    const f = document.getElementById('class-filter').value;
-    const start = new Date(focusD); start.setDate(start.getDate() - (start.getDay() || 7) + 1);
-    let h = '<table><tr><th>限</th>';
-    for(let i=0; i<5; i++) { let d = new Date(start); d.setDate(start.getDate() + i); h += `<th>${d.getMonth()+1}/${d.getDate()}</th>`; }
+    const filter = document.getElementById('class-filter').value;
+    const start = new Date(); start.setDate(start.getDate() - (start.getDay() || 7) + 1);
+    let h = '<table><tr><th class="row-label"></th>';
+    for(let i=0; i<5; i++) {
+      let d = new Date(start); d.setDate(start.getDate() + i);
+      h += `<th>${d.getMonth()+1}/${d.getDate()}</th>`;
+    }
+    h += '</tr><tr><td class="row-label">提出物</td>';
+    for(let i=0; i<5; i++) {
+      let d = new Date(start); d.setDate(start.getDate() + i);
+      let s = d.toLocaleDateString('sv-SE');
+      const ts = tasks.filter(t => t.date === s && (filter === 'すべて' || t.targetClass === filter));
+      h += `<td>${ts.map(t => `<div class="task-card">📝${t.subject}</div>`).join('')}</td>`;
+    }
     h += '</tr>';
-    for(let p=1; p<=appConfig.periodCount; p++) {
-      h += `<tr><td>${p}</td>`;
+    for(let p=1; p<=periodCount; p++) {
+      h += `<tr><td class="row-label">${p}限</td>`;
       for(let i=0; i<5; i++) {
-        let d = new Date(start); d.setDate(start.getDate() + i); let s = d.toLocaleDateString('sv-SE');
-        const its = db.filter(x => x.date === s && x.period == p && (f==='すべて' || x.targetClass === f));
-        h += `<td>${its.map(it => `<div class="card">${it.subject}</div>`).join('')}</td>`;
+        let d = new Date(start); d.setDate(start.getDate() + i);
+        let s = d.toLocaleDateString('sv-SE');
+        const its = schedule.filter(x => x.date === s && x.period == p && (filter === 'すべて' || x.targetClass === filter));
+        h += `<td onclick="onAddEntry('${s}',${p})">${its.map(it => `<div class="card">${it.subject}</div>`).join('')}</td>`;
       }
       h += '</tr>';
     }
     document.getElementById('view-area').innerHTML = h + '</table>';
   }
 
-  // --- ショートカット/モーダル制御 ---
-  function openM(m) { 
-    document.getElementById('overlay-' + m).style.display = 'flex'; 
-    if(m==='subject') loadSubjects();
-    if(m==='user') loadUsers();
-    if(m==='time') genTimeRows();
-  }
+  function openM(m) { document.getElementById('overlay-' + m).style.display = 'flex'; if(m==='user') loadUsers(); }
   function closeM() { document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
-
+  async function loadUsers() { const list = await callGas('getUsers', { sn: currentSn }); document.getElementById('user-list').innerHTML = list.map(u => `<div>${u.id} (${u.role})</div>`).join(''); }
+  async function onAddTask() { await callGas('saveTask', { sn: currentSn, date: document.getElementById('t-date').value, sub: document.getElementById('t-sub').value, con: document.getElementById('t-con').value, cl: document.getElementById('class-filter').value }); refresh(); }
   async function onAddClass() { await callGas('addClass', { sn: currentSn, n: document.getElementById('nc-name').value }); refresh(); }
-  async function onAddTask() { await callGas('saveSubmission', { sn: currentSn, date: document.getElementById('t-date').value, sub: document.getElementById('t-sub').value, con: document.getElementById('t-con').value, cl: document.getElementById('class-filter').value }); alert("登録完了"); }
-
-  async function loadSubjects() { const list = await callGas('getSubjectList', { sn: currentSn }); document.getElementById('sub-list').innerHTML = list.map(s => `<div>${s}</div>`).join(''); }
-  async function onAddSubject() { await callGas('addSubject', { sn: currentSn, name: document.getElementById('ns-name').value }); loadSubjects(); }
-
-  function genTimeRows() {
-    const c = document.getElementById('tc-count').value;
-    let h = ''; for(let i=1; i<=c; i++) h += `<tr><td>${i}</td><td><input class="time-in t-n" style="width:100%"></td><td><input class="time-in t-s" style="width:100%"></td><td><input class="time-in t-p" style="width:100%"></td></tr>`;
-    document.getElementById('tc-tbody').innerHTML = h;
-  }
-  async function onSaveTime() {
-    const count = document.getElementById('tc-count').value;
-    const n = Array.from(document.querySelectorAll('.t-n')).map(e => e.value);
-    const s = Array.from(document.querySelectorAll('.t-s')).map(e => e.value);
-    const p = Array.from(document.querySelectorAll('.t-p')).map(e => e.value);
-    await callGas('saveTimeConfig', { sn: currentSn, count, normal: n, short: s, special: p });
-    alert("保存完了"); closeM(); refresh();
-  }
-
-  async function loadUsers() { const list = await callGas('getUserList', { sn: currentSn }); document.getElementById('user-list').innerHTML = list.map(u => `<div>${u.id} (${u.role})</div>`).join(''); }
-  async function onAddUser() { await callGas('saveUser', { sn: currentSn, id: document.getElementById('nu-id').value, pw: document.getElementById('nu-pw').value, role: document.getElementById('nu-role').value }); loadUsers(); }
+  async function onAddEntry(d, p) { const s = prompt("科目名入力"); if(s) { await callGas('saveEntry', { sn: currentSn, d, p, s, r: "", role: "教員", cl: document.getElementById('class-filter').value }); refresh(); } }
 
   setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
