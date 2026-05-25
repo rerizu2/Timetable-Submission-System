@@ -1,132 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <base target="_top">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* CSS部分はご提示のものと同一のため省略、そのまま利用してください */
+    /* CSSはご提示いただいたものを使用（省略せず記述してください） */
     :root { --primary: #3b82f6; --bg: #f8fafc; --dark: #1e293b; --danger: #ef4444; --header-bg: #1e293b; --card-bg: #dbeafe; --card-text: #1e40af; --pink: #d63384; --btn-radius: 8px; }
     #landing-box, #setup-box, #complete-box, #login-box, #app-box, .modal-overlay { display: none; }
-    body.theme-dark { --primary: #60a5fa; --bg: #0f172a; --dark: #f8fafc; --header-bg: #1e293b; --card-bg: #334155; --card-text: #fff; }
-    body.theme-sakura { --primary: #db2777; --bg: #fff5f7; --dark: #831843; --header-bg: #be185d; --card-bg: #fce7f3; --card-text: #9d174d; --btn-radius: 25px; }
-    body.theme-cyber { --primary: #0f0; --bg: #000; --dark: #0f0; --header-bg: #111; --card-bg: #111; --card-text: #0f0; --btn-radius: 0px; }
-    body.theme-sky { --primary: #0ea5e9; --bg: #ffffff; --dark: #0369a1; --header-bg: #7dd3fc; --card-bg: #f0f9ff; --card-text: #0369a1; --btn-radius: 12px; }
-    body.theme-glass { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); --dark: #fff; --bg: transparent; }
-    body.theme-glass .box-ui, body.theme-glass #app-box, body.theme-glass .modal, body.theme-glass .btn-blue, body.theme-glass .btn-pink, body.theme-glass .nav-btn, body.theme-glass .card, body.theme-glass .input-ui {
-      background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); color: white;
-    }
     body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--dark); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: 0.3s; }
-    .box-ui { background: white; padding: 30px; border-radius: 15px; width: 340px; text-align: center; color: #333; }
+    .box-ui { background: white; padding: 30px; border-radius: 15px; width: 340px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); color: #333; }
     .input-ui { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
     .btn-blue { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: var(--btn-radius); cursor: pointer; font-weight: bold; margin-top: 10px; }
     .btn-pink { width: 100%; padding: 10px; background: var(--pink); color: white; border: none; border-radius: var(--btn-radius); cursor: pointer; font-weight: bold; margin-top: 10px; }
-    .nav-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-    #app-box { width: 98%; height: 96vh; background: white; border-radius: 12px; flex-direction: column; overflow: hidden; display: none; }
+    #app-box { width: 98%; height: 96vh; background: white; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
     .header { background: var(--header-bg); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
     .main-content { display: flex; flex: 1; overflow: hidden; }
     .sidebar { width: 260px; background: #fff; border-right: 1px solid #eee; padding: 15px; overflow-y: auto; color: #333; }
-    .view-area { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg); }
+    .view-area { flex: 1; padding: 15px; overflow-y: auto; }
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     th, td { border: 1px solid #eee; padding: 8px; text-align: center; }
     .card { padding: 5px; border-radius: 4px; border-left: 4px solid var(--primary); font-size: 11px; text-align: left; background: var(--card-bg); color: var(--card-text); cursor: pointer; }
-    .chat-box { height: 350px; overflow-y: auto; background: rgba(0,0,0,0.05); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-    .msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; }
-    .msg-mine { align-self: flex-end; background: var(--primary); color: white; }
-    .msg-other { align-self: flex-start; background: white; color: #333; border: 1px solid #ddd; }
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: none; justify-content: center; align-items: center; }
     .modal { background: white; padding: 25px; border-radius: 15px; width: 380px; color: #333; }
   </style>
 </head>
 <body class="theme-default">
 
-  <!-- ご提示のHTML要素をここに全て入れてください（省略） -->
-  <div id="landing-box" class="box-ui"><h2>TimeTable Pro</h2><button class="btn-blue" onclick="showSection('setup')">新規に学校を作成</button><button class="btn-blue" style="background:#64748b;" onclick="showSection('login')">既存校にログイン</button></div>
-  <div id="setup-box" class="box-ui"><h3>学校の新規登録</h3><input type="text" id="s-school" class="input-ui" placeholder="学校名"><input type="text" id="s-admin-id" class="input-ui" placeholder="管理者ID"><input type="password" id="s-admin-pw" class="input-ui" placeholder="管理者PW"><button class="btn-blue" onclick="doSetup()">作成</button><br><br><span style="cursor:pointer;" onclick="showSection('landing')">戻る</span></div>
-  <div id="complete-box" class="box-ui"><h3>作成完了！</h3>学校番号: <h1 id="res-school-no">000000</h1><button class="btn-blue" onclick="showSection('login')">ログインへ</button></div>
-  <div id="login-box" class="box-ui">
+  <!-- ログイン画面 -->
+  <div id="login-box" class="box-ui" style="display:block;">
     <h3>School Login</h3>
     <input type="number" id="l-school-no" class="input-ui" placeholder="6桁の学校番号" oninput="handleSchoolNoInput(this.value)">
-    <div id="role-selector-container" style="display:none;"><select id="l-role" class="input-ui" onchange="onRoleChange()"><option value="生徒" selected>生徒</option><option value="教員">教員</option><option value="管理者">管理者</option></select></div>
-    <div id="id-area"><div id="uid-select-wrapper"><label style="font-size:11px;">クラス選択</label><select id="uid-select" class="input-ui"></select></div><div id="uid-text-wrapper" style="display:none;"><label style="font-size:11px;">ユーザーID</label><input type="text" id="uid-text" class="input-ui"></div></div>
-    <div id="pw-area" style="display:none;"><label style="font-size:11px;">パスワード</label><input type="password" id="upw" class="input-ui"></div>
+    <select id="l-role" class="input-ui" onchange="onRoleChange()">
+      <option value="生徒">生徒</option>
+      <option value="教員">教員</option>
+      <option value="管理者">管理者</option>
+    </select>
+    <div id="uid-select-wrapper"><select id="uid-select" class="input-ui"></select></div>
+    <div id="uid-text-wrapper" style="display:none;"><input type="text" id="uid-text" class="input-ui" placeholder="ユーザーID"></div>
+    <div id="pw-area"><input type="password" id="upw" class="input-ui" placeholder="パスワード"></div>
     <button class="btn-blue" onclick="doLogin()">ログイン</button>
-    <br><span style="cursor:pointer;" onclick="showSection('landing')">戻る</span>
   </div>
 
+  <!-- メインアプリ画面 -->
   <div id="app-box">
     <div class="header">
-      <div style="display:flex; align-items:center;">
-        <div style="font-size:12px; margin-right:15px; text-align:left;"><b id="h-school-name">---</b><br><small id="h-school-no">No.---</small></div>
-        <div id="digital-clock" style="font-family:monospace; margin-right:10px; background:rgba(0,0,0,0.3); padding:2px 5px; border-radius:4px;">00:00:00</div>
-        <select id="header-school-select" class="input-ui" style="width:160px; margin-right:10px; display:none;" onchange="refresh(true);"></select>
-        <div id="nav-controls" style="display:flex; align-items:center;">
-          <button onclick="move(-1)" class="nav-btn">＜</button>
-          <span id="date-label" style="margin:0 10px; font-weight:bold; min-width:140px; text-align:center;"></span>
-          <button onclick="move(1)" class="nav-btn">＞</button>
-        </div>
-      </div>
+      <div id="h-school-name">---</div>
+      <div id="digital-clock">00:00:00</div>
       <div>
-        <button id="btn-day" onclick="changeV('day')" class="nav-btn">日</button>
-        <button id="btn-week" onclick="changeV('week')" class="nav-btn">週</button>
-        <button id="btn-month" onclick="changeV('month')" class="nav-btn">月</button>
-        <button id="btn-task" onclick="changeV('task')" class="nav-btn" style="background:#f43f5e; border:none;">提出物一覧</button>
-        <button onclick="location.reload()" class="nav-btn" style="background:red; border:none; margin-left:10px;">Logout</button>
+        <button onclick="changeV('day')" class="btn-blue" style="width:auto; display:inline;">日</button>
+        <button onclick="changeV('week')" class="btn-blue" style="width:auto; display:inline;">週</button>
+        <button onclick="location.reload()" class="btn-pink" style="width:auto; display:inline;">ログアウト</button>
       </div>
     </div>
     <div class="main-content">
-      <div class="sidebar" id="admin-sidebar">
-        <label>テーマ切替</label>
-        <select id="theme-select" class="input-ui" onchange="changeTheme(this.value)">
-             <option value="default">モダン</option>
-             <option value="dark">ダーク</option>
-             <option value="sakura">サクラ</option>
-             <option value="cyber">サイバー</option>
-             <option value="sky">スカイ</option>
-             <option value="glass">ガラス</option>
-        </select>
-        <label>クラス選択</label><select id="sidebar-class-filter" class="input-ui" onchange="render();"></select>
-        <button class="btn-blue" onclick="openM('chat')">制作へ連絡</button>
+      <div class="sidebar">
+        <label>表示クラス</label>
+        <select id="sidebar-class-filter" class="input-ui" onchange="render()"></select>
         <hr>
-        <div id="side-task-section">
+        <button class="btn-blue" onclick="openM('chat')">制作へ連絡</button>
+        <button class="btn-blue" onclick="openM('time')">時刻設定</button>
+        <button class="btn-blue" onclick="openM('user')">ユーザー管理</button>
+        <div id="side-task">
           <label>提出物登録</label>
-          <input type="date" id="task-date" class="input-ui"><input type="text" id="task-subject" class="input-ui" placeholder="科目名"><input type="text" id="task-content" class="input-ui" placeholder="内容"><select id="task-class-select" class="input-ui"></select><button class="btn-pink" onclick="onSaveTask()">登録</button>
-        </div>
-        <div id="side-config-section"><button class="btn-blue" onclick="openM('time')">時刻設定</button></div>
-        <div id="side-admin-only" style="display:none;">
-          <hr><button class="btn-blue" onclick="openM('user')">ユーザー管理</button>
-          <input type="text" id="new-class-input" class="input-ui" placeholder="新クラス名"><button class="btn-pink" onclick="onAddClass()">追加</button>
-          <button class="btn-blue" style="background:red;" onclick="onWipeAllData()">データ全削除</button>
+          <input type="date" id="task-date" class="input-ui">
+          <input type="text" id="task-subject" class="input-ui" placeholder="科目名">
+          <input type="text" id="task-content" class="input-ui" placeholder="内容">
+          <select id="task-class-select" class="input-ui"></select>
+          <button class="btn-pink" onclick="onSaveTask()">登録</button>
         </div>
       </div>
       <div id="view-area" class="view-area"></div>
     </div>
   </div>
 
-  <div class="modal-overlay" id="overlay-chat"><div class="modal"><h3>連絡</h3><div id="chat-container" class="chat-box"></div><input type="text" id="chat-input" class="input-ui"><button class="btn-blue" onclick="onSendChat()">送信</button><button onclick="closeM()">閉じる</button></div></div>
+  <!-- モーダル各種 -->
   <div class="modal-overlay" id="overlay-edit"><div class="modal"><h3>編集</h3><input type="text" id="m-subject" class="input-ui"><input type="text" id="m-room" class="input-ui"><button class="btn-blue" onclick="onSave()">保存</button><button class="btn-pink" onclick="onDelete()">削除</button><button onclick="closeM()">閉じる</button></div></div>
+  <div class="modal-overlay" id="overlay-chat"><div class="modal"><h3>チャット</h3><div id="chat-container"></div><input type="text" id="chat-input" class="input-ui"><button class="btn-blue" onclick="onSendChat()">送信</button><button onclick="closeM()">閉じる</button></div></div>
   <div class="modal-overlay" id="overlay-user"><div class="modal"><h3>管理</h3><input type="text" id="nu-id" class="input-ui" placeholder="ID"><input type="text" id="nu-pw" class="input-ui" placeholder="PW"><select id="nu-role" class="input-ui"><option value="教員">教員</option><option value="管理者">管理者</option></select><button class="btn-blue" onclick="onAddUser()">保存</button><div id="user-list-box"></div><button onclick="closeM()">閉じる</button></div></div>
-  <div class="modal-overlay" id="overlay-time"><div class="modal"><h3>時刻設定</h3><input type="number" id="tc-count" class="input-ui"><table id="tc-tbody"></table><button class="btn-blue" onclick="onSaveTimeConfig()">保存</button><button onclick="closeM()">閉じる</button></div></div>
+  <div class="modal-overlay" id="overlay-time"><div class="modal"><h3>時刻設定</h3>限数:<input type="number" id="tc-count" class="input-ui"><table id="tc-tbody"></table><button class="btn-blue" onclick="onSaveTimeConfig()">保存</button><button onclick="closeM()">閉じる</button></div></div>
 
 <script>
-  // --- 通信設定 ---
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbzUwnNmbnB_FF-RaA4iZw_AlgL14tqVsJHTcNiyx6U8ecbBHE6Gs-kGapGpd1oE2SsjUQ/exec";
+  // --- 通信用URLをここに貼る ---
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyoRU0VX3GQ5CvpzLcdvFKyjI0OBBUsm2D2cdsULK0iHX712HdeSmSXUDOGFIJFcvnMNg/exec"; 
 
   async function callGas(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
     return await res.json();
   }
 
-  let db=[], tasks=[], appConfig={}, focusD=new Date(), mode='week', userRole="生徒", studentClass="", currentLoginId="", currentSchoolNo="", userPerms="";
+  let db=[], tasks=[], appConfig={}, focusD=new Date(), mode='week', userRole="生徒", currentSchoolNo="", studentClass="";
 
-  window.onload = async () => { 
-    const s = await callGas('getAppStatus');
-    showSection(s.isSetup ? 'login' : 'landing');
-    setInterval(clock, 1000); 
-    changeTheme(localStorage.getItem("appTheme") || "default");
-  };
-
-  function clock(){ const n=new Date(); document.getElementById('digital-clock').innerText=`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`; }
-  function changeTheme(t){ document.body.className = "theme-"+t; localStorage.setItem("appTheme", t); }
   function showSection(s){ document.querySelectorAll('.box-ui, #app-box, .modal-overlay').forEach(el=>el.style.display='none'); const t=document.getElementById(s+'-box'); if(t) t.style.display=(s==='app'?'flex':'block'); }
   function openM(m){ document.getElementById('overlay-'+m).style.display='flex'; if(m==='chat') refreshChat(); if(m==='user') loadUsers(); }
   function closeM(){ document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
@@ -135,7 +98,6 @@
     if(val.length===6) {
       const c = await callGas('getLoginConfig', { sn: val });
       document.getElementById('uid-select').innerHTML = c.classList.map(x=>`<option value="${x}">${x}</option>`).join('');
-      document.getElementById('pw-area').style.display = (c.isStudentPwOn==='ON'?'block':'none');
     }
   }
 
@@ -144,77 +106,53 @@
     let id=(r==='生徒'?document.getElementById('uid-select').value : document.getElementById('uid-text').value);
     const res = await callGas('checkLogin', { sn, id, pw, role: r });
     if(res.success){
-      userRole=r; currentLoginId=id; currentSchoolNo=sn; if(r==='生徒') studentClass=id; userPerms=res.perms||"";
-      showSection('app'); document.getElementById('h-school-name').innerText=res.schoolName; document.getElementById('h-school-no').innerText="No."+sn;
+      userRole=r; currentSchoolNo=sn; studentClass=(r==='生徒'?id:"");
+      showSection('app'); document.getElementById('h-school-name').innerText=res.schoolName;
       refresh();
     } else alert(res.message);
   }
 
-  async function refresh(isSchoolChange = false) {
-    const hSelect = document.getElementById('header-school-select');
-    const appData = await callGas('getFullAppData', { sn: currentSchoolNo, headerVal: hSelect.value });
-    appConfig = appData;
+  async function refresh() {
+    appConfig = await callGas('getFullAppData', { sn: currentSchoolNo });
+    db = await callGas('getScheduleData', { sn: currentSchoolNo });
+    tasks = await callGas('getSubmissionData', { sn: currentSchoolNo });
     const sSelect = document.getElementById('sidebar-class-filter');
-    sSelect.innerHTML = (userRole!=='生徒'?'<option value="すべて">すべて</option>':'') + appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
+    sSelect.innerHTML = '<option value="すべて">すべて</option>' + appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
     document.getElementById('task-class-select').innerHTML = appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
-    
-    db = await callGas('getScheduleData', { sn: appConfig.schoolNo });
-    tasks = await callGas('getSubmissionData', { sn: appConfig.schoolNo });
-    applyPerms(); render();
-  }
-
-  function applyPerms() {
-    const isA=(userRole==='管理者');
-    document.getElementById('admin-sidebar').style.display=(userRole==='生徒'?'none':'block');
-    document.getElementById('side-admin-only').style.display=(isA?'block':'none');
+    render();
   }
 
   function render() {
-    const area=document.getElementById('view-area'), days=['日','月','火','水','木','金','土'];
-    let f = (userRole==='生徒'?studentClass : document.getElementById('sidebar-class-filter').value);
-    const ds = focusD.toLocaleDateString('sv-SE');
-    document.getElementById('date-label').innerText=`${focusD.getMonth()+1}/${focusD.getDate()}(${days[focusD.getDay()]})`; 
-
-    if(mode==='task'){
-      area.innerHTML = tasks.filter(t=>f==='すべて'||t.targetClass===f).map(t=>`<div>${t.subject} (${t.date})</div>`).join('');
-      return;
-    }
-
-    let h = '<table>';
-    const start=new Date(focusD); start.setDate(start.getDate()-start.getDay()+(start.getDay()===0?-6:1));
-    h+='<tr><th></th>'; const dts=[];
-    for(let i=0;i<5;i++){ let d=new Date(start); d.setDate(start.getDate()+i); let s=d.toLocaleDateString('sv-SE'); dts.push(s); h+=`<th>${d.getMonth()+1}/${d.getDate()}</th>`; }
+    const area=document.getElementById('view-area'), f=(userRole==='生徒'?studentClass:document.getElementById('sidebar-class-filter').value);
+    const start=new Date(focusD); start.setDate(start.getDate()-start.getDay()+1);
+    let h='<table><tr><th></th>';
+    for(let i=0;i<5;i++){ let d=new Date(start); d.setDate(start.getDate()+i); h+=`<th>${d.getMonth()+1}/${d.getDate()}</th>`; }
     h+='</tr>';
     for(let p=1; p<=appConfig.periodCount; p++){
       h+=`<tr><td>${p}限</td>`;
-      dts.forEach(s=>{
+      for(let i=0;i<5;i++){
+        let d=new Date(start); d.setDate(start.getDate()+i); let s=d.toLocaleDateString('sv-SE');
         const its=db.filter(x=>x.date===s && String(x.period)===String(p) && (f==='すべて'||x.targetClass===f));
         h+=`<td onclick="openE('${s}',${p})">${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td>`;
-      });
+      }
       h+='</tr>';
     }
     area.innerHTML = h+'</table>';
   }
 
   function openE(d,p){
-    const f= (userRole==='生徒' ? studentClass : document.getElementById('sidebar-class-filter').value);
-    const it=db.find(x=>x.date===d&&String(x.period)===String(p)&&(f==='すべて'||x.targetClass===f));
     if(userRole==='生徒') return;
-    openM('edit'); document.getElementById('m-subject').value=it?it.subject:''; document.getElementById('m-room').value=it?it.room:''; window.curE={d,p};
+    openM('edit'); window.curE={d,p};
   }
 
-  async function onSave(){ await callGas('saveEntry', { sn: appConfig.schoolNo, d:window.curE.d, p:window.curE.p, s:document.getElementById('m-subject').value, r:document.getElementById('m-room').value, role:userRole, cl:document.getElementById('sidebar-class-filter').value }); closeM(); refresh(); }
-  async function onDelete(){ await callGas('deleteEntry', { sn: appConfig.schoolNo, d:window.curE.d, p:window.curE.p, cl:document.getElementById('sidebar-class-filter').value }); closeM(); refresh(); }
-  async function onSaveTask(){ await callGas('saveSubmission', { sn: appConfig.schoolNo, date:document.getElementById('task-date').value, subject:document.getElementById('task-subject').value, content:document.getElementById('task-content').value, targetClass:document.getElementById('task-class-select').value }); refresh(); }
-  async function refreshChat(){ const msgs = await callGas('getChatMessages', { sn: appConfig.schoolNo }); document.getElementById('chat-container').innerHTML = msgs.map(m=>`<div class="msg">${m.msg}</div>`).join(''); }
-  async function onSendChat(){ await callGas('sendChatMessage', { sn: appConfig.schoolNo, sender: currentLoginId, role: userRole, msg: document.getElementById('chat-input').value }); refreshChat(); }
-  async function loadUsers(){ const list = await callGas('getUserList', { sn: appConfig.schoolNo }); document.getElementById('user-list-box').innerHTML = list.map(u=>`<div>${u.id}</div>`).join(''); }
-  async function onAddUser(){ await callGas('saveUser', { sn: appConfig.schoolNo, id: document.getElementById('nu-id').value, pw: document.getElementById('nu-pw').value, role: document.getElementById('nu-role').value }); loadUsers(); }
-  async function doSetup(){ const res = await callGas('processInitialSetup', { schoolName: document.getElementById('s-school').value, adminId: document.getElementById('s-admin-id').value, adminPw: document.getElementById('s-admin-pw').value }); document.getElementById('res-school-no').innerText=res.schoolNumber; showSection('complete'); }
-  async function onWipeAllData(){ if(confirm('消去？')) await callGas('wipeAllData', { sn: appConfig.schoolNo }); refresh(); }
+  async function onSave(){ await callGas('saveEntry', { sn: currentSchoolNo, d:window.curE.d, p:window.curE.p, s:document.getElementById('m-subject').value, r:document.getElementById('m-room').value, role:userRole, cl:document.getElementById('sidebar-class-filter').value }); closeM(); refresh(); }
+  async function onDelete(){ await callGas('deleteEntry', { sn: currentSchoolNo, d:window.curE.d, p:window.curE.p, cl:document.getElementById('sidebar-class-filter').value }); closeM(); refresh(); }
+  async function onSaveTask(){ await callGas('saveSubmission', { sn: currentSchoolNo, date:document.getElementById('task-date').value, subject:document.getElementById('task-subject').value, content:document.getElementById('task-content').value, targetClass:document.getElementById('task-class-select').value }); refresh(); }
+  async function loadUsers(){ const list = await callGas('getUserList', { sn: currentSchoolNo }); document.getElementById('user-list-box').innerHTML = list.map(u=>`<div>${u.id}</div>`).join(''); }
+  async function onAddUser(){ await callGas('saveUser', { sn: currentSchoolNo, id: document.getElementById('nu-id').value, pw: document.getElementById('nu-pw').value, role: document.getElementById('nu-role').value }); loadUsers(); }
+  function onRoleChange(){ const r=document.getElementById('l-role').value; document.getElementById('uid-text-wrapper').style.display=(r==='生徒'?'none':'block'); document.getElementById('uid-select-wrapper').style.display=(r==='生徒'?'block':'none'); }
   function changeV(v){ mode=v; render(); }
-  function move(s){ focusD.setDate(focusD.getDate()+s*(mode==='week'?7:1)); render(); }
-  function onRoleChange(){ const r=document.getElementById('l-role').value, isS=(r==='生徒'); document.getElementById('uid-text-wrapper').style.display=isS?'none':'block'; document.getElementById('uid-select-wrapper').style.display='block'; document.getElementById('pw-area').style.display=isS?'none':'block'; }
+  setInterval(() => { document.getElementById('digital-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
 </html>
