@@ -4,231 +4,232 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --primary: #4285f4; --bg: #f0f4f8; --header-bg: #1e293b; --border: #e2e8f0; --pink: #db2777; }
-    #setup-box, #complete-box, #login-box, #app-box, .modal-overlay { display: none; }
-    body { margin: 0; font-family: sans-serif; background: var(--bg); color: #475569; overflow: hidden; }
+    :root { --primary: #3b82f6; --bg: #f3f4f6; --header-bg: #1e293b; --sidebar-bg: #f9fafb; --pink: #db2777; --purple: #8b5cf6; }
+    body { margin: 0; font-family: "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: #334155; overflow: hidden; }
     
-    #app-box { width: 98vw; height: 96vh; margin: 2vh auto; background: #f8fafc; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-    .header { background: var(--header-bg); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; }
-    .main-content { display: flex; flex: 1; overflow: hidden; }
-    .sidebar { width: 300px; background: #f1f5f9; padding: 20px; overflow-y: auto; border-right: 1px solid var(--border); }
-    .view-area { flex: 1; padding: 25px; overflow-y: auto; background: white; }
+    /* Header */
+    .header { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .header-center { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 15px; }
+    .header-right { display: flex; gap: 8px; }
+    .nav-btn { background: #334155; border: 1px solid #475569; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; }
 
-    .sidebar-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
-    .sidebar-card label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #64748b; }
-    .input-ui { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
-    .btn-blue-rect { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 8px; }
-    .btn-pink-rect { width: 100%; padding: 12px; background: var(--pink); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: none; justify-content: center; align-items: center; }
-    .modal { background: white; padding: 30px; border-radius: 20px; width: 600px; max-height: 90vh; overflow-y: auto; }
-    .time-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    .time-table th, .time-table td { border: 1px solid #eee; padding: 8px; text-align: center; }
-    .time-input { width: 100%; padding: 5px; border: 1px solid #ddd; text-align: center; }
+    /* Layout */
+    .main-wrapper { display: flex; height: calc(100vh - 50px); }
+    .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e5e7eb; padding: 15px; overflow-y: auto; }
+    .view-area { flex: 1; padding: 20px; overflow-y: auto; background: white; }
 
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
-    .card { padding: 6px; border-radius: 4px; border-left: 4px solid var(--primary); background: #eff6ff; font-size: 11px; text-align: left; margin-bottom: 2px; }
-    .user-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+    /* Sidebar Components */
+    .card { background: white; border-radius: 10px; padding: 12px; margin-bottom: 15px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .label { font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #64748b; display: block; }
+    .input-ui { width: 100%; padding: 8px; margin-bottom: 6px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; font-size: 13px; margin-bottom: 5px; }
+    .btn-purple { background: var(--purple); }
+    .btn-pink { background: var(--pink); }
+    .btn-blue { background: var(--primary); }
+    .btn-red { background: #ef4444; }
+
+    /* Class List */
+    .class-item { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+    .del-icon { color: #94a3b8; cursor: pointer; }
+
+    /* Timetable Table */
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: center; vertical-align: middle; height: 50px; }
+    th { background: #fdfdfd; font-size: 12px; color: #64748b; }
+    .row-label { font-weight: bold; width: 100px; background: #fdfdfd; }
+    .task-cell { background: #fff1f2; border-radius: 4px; padding: 4px; font-size: 11px; text-align: left; color: #be123c; border: 1px solid #fecdd3; }
+    .entry-card { background: #eff6ff; border-left: 4px solid var(--primary); padding: 5px; font-size: 12px; text-align: left; border-radius: 4px; }
+
+    #login-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; align-items: center; justify-content: center; }
   </style>
 </head>
 <body>
 
-  <!-- 初期画面 -->
-  <div id="login-box" style="display:block; width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-    <h2>TimeTable Pro</h2>
-    <input type="number" id="l-sn" class="input-ui" placeholder="学校番号">
-    <input type="text" id="l-id" class="input-ui" placeholder="ユーザーID">
-    <input type="password" id="l-pw" class="input-ui" placeholder="パスワード">
-    <button class="btn-blue-rect" onclick="doLogin()">ログイン</button>
-    <p style="font-size:12px; color:gray; cursor:pointer;" onclick="showSection('setup')">新規学校登録はこちら</p>
+  <div id="login-screen">
+    <div style="width: 300px; text-align: center;">
+      <h2>School Login</h2>
+      <input type="text" id="l-sn" class="input-ui" placeholder="学校番号">
+      <input type="password" id="l-pw" class="input-ui" placeholder="パスワード">
+      <button class="btn btn-blue" onclick="doLogin()">Login</button>
+    </div>
   </div>
 
-  <div id="setup-box" style="width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center;">
-    <h3>新規校作成</h3>
-    <input type="text" id="s-name" class="input-ui" placeholder="学校名">
-    <input type="text" id="s-id" class="input-ui" placeholder="管理者ID">
-    <input type="password" id="s-pw" class="input-ui" placeholder="管理者PW">
-    <button class="btn-blue-rect" onclick="doSetup()">作成</button>
-  </div>
-
-  <div id="complete-box" style="width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center;">
-    <h3>作成完了</h3>
-    <h1 id="res-sn" style="color:var(--primary)">000000</h1>
-    <button class="btn-blue-rect" onclick="location.reload()">ログインへ</button>
-  </div>
-
-  <!-- メインアプリ -->
-  <div id="app-box">
-    <div class="header">
-      <div><b id="h-school-name">---</b> <small id="h-school-no">No.---</small></div>
-      <div id="digital-clock" style="font-family:monospace; font-size:20px;">00:00:00</div>
-      <div>
-        <button onclick="window.open('https://script.google.com/macros/s/AKfycbxGhayJqPsF50e4F_l_Y-xtb4TdrqZTLfSjcySPs_UMy0AgxifL1r4uhMgpyZ0nWHzoQQ/exec','_blank')" style="background:#4f46e5; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">ポータル</button>
-        <button onclick="location.reload()" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-left:10px;">終了</button>
+  <div class="header">
+    <div class="header-left">
+      <div><b id="h-school-name">---</b><br><small id="h-school-no">No.---</small></div>
+      <div id="clock">00:00:00</div>
+      <div style="display:flex; gap:5px;">
+        <button class="nav-btn" onclick="moveDate(-7)">＜</button>
+        <button class="nav-btn" onclick="moveDate(7)">＞</button>
       </div>
     </div>
-    <div class="main-content">
-      <div class="sidebar">
-        <div class="sidebar-card"><label>🎨 デザイン</label><select class="input-ui"><option>モダン</option></select></div>
-        <div class="sidebar-card"><label>表示クラス</label><select id="sidebar-class-filter" class="input-ui" onchange="render()"></select></div>
-        
-        <button class="btn-blue-rect" onclick="openM('subject')">教科マネージャー</button>
-        <button class="btn-blue-rect" onclick="alert('名簿管理画面へ')">名簿管理 (PW設定)</button>
-        <button class="btn-blue-rect" onclick="openM('time')">時刻設定</button>
-        <button class="btn-blue-rect" onclick="openM('user')">ユーザー管理</button>
+    <div class="header-center" id="display-date">2024/05/25(月)</div>
+    <div class="header-right">
+      <button class="nav-btn">日</button>
+      <button class="nav-btn" style="background:white; color:black;">週</button>
+      <button class="nav-btn">月</button>
+      <button class="nav-btn" style="background:var(--pink); border:none;">提出物一覧</button>
+      <button class="nav-btn" style="background:#ef4444; border:none;" onclick="location.reload()">Logout</button>
+    </div>
+  </div>
 
-        <div class="sidebar-card">
-          <label>▼提出物登録</label>
-          <input type="date" id="task-date" class="input-ui">
-          <input type="text" id="task-sub" class="input-ui" placeholder="科目名">
-          <input type="text" id="task-con" class="input-ui" placeholder="内容">
-          <button class="btn-pink-rect" style="width:100%" onclick="onAddTask()">登録</button>
-        </div>
-
-        <div class="sidebar-card">
-          <label>クラス追加</label>
-          <input type="text" id="nc-name" class="input-ui" placeholder="1年A組">
-          <button class="btn-pink-rect" style="width:100%" onclick="onAddClass()">追加</button>
-        </div>
+  <div class="main-wrapper">
+    <div class="sidebar">
+      <div class="card">
+        <span class="label">表示クラス選択</span>
+        <select id="class-filter" class="input-ui" onchange="render()"></select>
       </div>
-      <div id="view-area" class="view-area"></div>
-    </div>
-  </div>
+      
+      <button class="btn btn-purple">制作へ連絡</button>
 
-  <!-- 時刻設定モーダル -->
-  <div class="modal-overlay" id="overlay-time">
-    <div class="modal">
-      <h3>時刻設定</h3>
-      <label>限数:</label><input type="number" id="t-count" class="input-ui" value="6" oninput="genTimeRows()">
-      <table class="time-table">
-        <thead><tr><th>限</th><th>普</th><th>短</th><th>特</th></tr></thead>
-        <tbody id="time-tbody"></tbody>
-      </table>
-      <button class="btn-blue-rect" onclick="onSaveTime()">保存</button>
-      <button class="btn-pink-rect" style="background:gray;" onclick="closeM()">閉じる</button>
-    </div>
-  </div>
+      <div class="card">
+        <span class="label">▼提出物登録</span>
+        <input type="date" id="t-date" class="input-ui">
+        <input type="text" id="t-sub" class="input-ui" placeholder="科目名">
+        <input type="text" id="t-con" class="input-ui" placeholder="内容">
+        <select id="t-class" class="input-ui"></select>
+        <button class="btn btn-pink" onclick="onAddTask()">登録</button>
+      </div>
 
-  <!-- ユーザー管理モーダル -->
-  <div class="modal-overlay" id="overlay-user">
-    <div class="modal">
-      <h3>ユーザー管理</h3>
-      <input type="text" id="u-id" class="input-ui" placeholder="ID">
-      <input type="password" id="u-pw" class="input-ui" placeholder="PW">
-      <select id="u-role" class="input-ui"><option value="教員">教員</option><option value="管理者">管理者</option></select>
-      <button class="btn-blue-rect" onclick="onAddUser()">登録</button>
-      <div id="user-list" style="margin-top:20px;"></div>
-      <button class="btn-pink-rect" style="background:gray; margin-top:20px;" onclick="closeM()">閉じる</button>
+      <button class="btn btn-blue">時刻・限数設定</button>
+
+      <div class="card">
+        <span class="label">日付モード設定</span>
+        <input type="date" class="input-ui">
+        <select class="input-ui"><option>普通</option></select>
+        <button class="btn btn-pink">適用</button>
+      </div>
+
+      <button class="btn btn-purple">ユーザー管理</button>
+
+      <div class="card">
+        <input type="text" id="nc-name" class="input-ui" placeholder="新クラス名">
+        <button class="btn btn-pink" onclick="onAddClass()">クラス追加</button>
+      </div>
+
+      <div id="class-list-area"></div>
+
+      <button class="btn btn-red" style="margin-top: 20px;" onclick="onClearAll()">全データ削除</button>
     </div>
+
+    <div class="view-area" id="view-area"></div>
   </div>
 
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycby2Tst0FdmSfGAW62zO_vc6gsOBH4cHa52hnkTK2gtu2ieVHuQem8j8JW9MTWPM9aPcxw/exec"; 
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby2F8lBqNto17OFDoYPePmatVsu7ftxb0mzqXl-z8ltI-xLma2XE0YuO0IMk-wp8XVXtg/exec";
+  let currentSn = "", classList = [], schedule = [], tasks = [], focusDate = new Date();
 
-  async function callGas(action, data = {}) {
+  // 通信関数
+  async function call(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
     return await res.json();
   }
 
-  let currentSchoolNo = "", appConfig = {}, db = [], focusD = new Date();
-
-  function showSection(s){ 
-    document.querySelectorAll('#setup-box, #complete-box, #login-box, #app-box').forEach(el=>el.style.display='none');
-    document.getElementById(s+'-box').style.display='block';
-    if(s==='app') document.getElementById(s+'-box').style.display='flex';
-  }
-
   async function doLogin() {
     const sn = document.getElementById('l-sn').value;
-    const id = document.getElementById('l-id').value;
-    const pw = document.getElementById('l-pw').value;
-    const res = await callGas('checkLogin', { sNo: sn, id, pw });
-    if(res.success) {
-      currentSchoolNo = sn;
-      showSection('app');
-      document.getElementById('h-school-name').innerText = res.schoolName;
-      document.getElementById('h-school-no').innerText = "No." + sn;
-      refresh();
-    } else alert(res.message);
+    const res = await call('getAppData', { sn });
+    currentSn = sn;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('h-school-no').innerText = "No." + sn;
+    document.getElementById('h-school-name').innerText = "王寺工業高等学校"; // 実際はresから取得
+    refresh();
   }
 
   async function refresh() {
-    appConfig = await callGas('getFullAppData', { sn: currentSchoolNo });
-    db = await callGas('getScheduleData', { sn: currentSchoolNo });
-    document.getElementById('sidebar-class-filter').innerHTML = appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
+    const res = await call('getAppData', { sn: currentSn });
+    classList = res.classes;
+    schedule = res.schedule;
+    tasks = res.tasks;
+    
+    const filter = document.getElementById('class-filter');
+    const tClass = document.getElementById('t-class');
+    const options = classList.map(c => `<option value="${c}">${c}</option>`).join('');
+    filter.innerHTML = '<option value="すべて">すべて</option>' + options;
+    tClass.innerHTML = options;
+
+    document.getElementById('class-list-area').innerHTML = classList.map(c => `
+      <div class="class-item"><span>${c} ×</span><span class="del-icon" onclick="onDelClass('${c}')"></span></div>
+    `).join('');
+
     render();
   }
 
   function render() {
-    const f = document.getElementById('sidebar-class-filter').value;
-    const start = new Date(focusD); start.setDate(start.getDate()-start.getDay()+1);
-    let h = '<table><tr><th>限</th>';
+    const filter = document.getElementById('class-filter').value;
+    const start = new Date(focusDate);
+    start.setDate(start.getDate() - (start.getDay() === 0 ? 6 : start.getDay() - 1));
+    
+    document.getElementById('display-date').innerText = `${start.getMonth()+1}/${start.getDate()}(月) 〜`;
+
+    let h = '<table><tr><th class="row-label"></th>';
     for(let i=0; i<5; i++) {
-      let d = new Date(start); d.setDate(start.getDate()+i); h += `<th>${d.getMonth()+1}/${d.getDate()}</th>`;
+      let d = new Date(start); d.setDate(start.getDate()+i);
+      const dayStr = ["日","月","火","水","木","金","土"][d.getDay()];
+      h += `<th>${d.getMonth()+1}/${d.getDate()}(${dayStr})</th>`;
     }
     h += '</tr>';
-    for(let p=1; p<=appConfig.periodCount; p++) {
-      h += `<tr><td>${p}</td>`;
+
+    // 提出物行
+    h += '<tr><td class="row-label">提出物</td>';
+    for(let i=0; i<5; i++) {
+      let d = new Date(start); d.setDate(start.getDate()+i);
+      const s = d.toLocaleDateString('sv-SE');
+      const dayTasks = tasks.filter(t => t.date === s && (filter === 'すべて' || t.targetClass === filter));
+      h += `<td>${dayTasks.map(t => `<div class="task-cell">📝${t.subject}</div>`).join('')}</td>`;
+    }
+    h += '</tr>';
+
+    // 1限〜6限
+    for(let p=1; p<=6; p++) {
+      h += `<tr><td class="row-label">${p}限</td>`;
       for(let i=0; i<5; i++) {
-        let d = new Date(start); d.setDate(start.getDate()+i); let s = d.toLocaleDateString('sv-SE');
-        const its = db.filter(x=>x.date===s && String(x.period)===String(p) && x.targetClass===f);
-        h += `<td>${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td>`;
+        let d = new Date(start); d.setDate(start.getDate()+i);
+        const s = d.toLocaleDateString('sv-SE');
+        const entries = schedule.filter(e => e.date === s && e.period == p && (filter === 'すべて' || e.targetClass === filter));
+        h += `<td onclick="onAddEntry('${s}',${p})">${entries.map(e => `<div class="entry-card">${e.subject}</div>`).join('')}</td>`;
       }
       h += '</tr>';
     }
     document.getElementById('view-area').innerHTML = h + '</table>';
   }
 
-  function openM(m) { 
-    document.getElementById('overlay-'+m).style.display='flex'; 
-    if(m==='time') genTimeRows();
-    if(m==='user') loadUsers();
-  }
-  function closeM() { document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
-
-  function genTimeRows() {
-    const c = document.getElementById('t-count').value;
-    let h = '';
-    for(let i=1; i<=c; i++) h+=`<tr><td>${i}</td><td><input class="time-input t-n"></td><td><input class="time-input t-s"></td><td><input class="time-input t-x"></td></tr>`;
-    document.getElementById('time-tbody').innerHTML = h;
-  }
-
-  async function onSaveTime() {
-    const c = document.getElementById('t-count').value;
-    const n = Array.from(document.querySelectorAll('.t-n')).map(e=>e.value);
-    const s = Array.from(document.querySelectorAll('.t-s')).map(e=>e.value);
-    const x = Array.from(document.querySelectorAll('.t-x')).map(e=>e.value);
-    await callGas('saveTimeConfig', { sn: currentSchoolNo, count: c, normal: n, short: s, special: x });
-    alert("保存完了"); closeM(); refresh();
-  }
-
-  async function loadUsers() {
-    const list = await callGas('getUsers', { sn: currentSchoolNo });
-    document.getElementById('user-list').innerHTML = list.map(u=>`<div class="user-item"><span>${u.id} (${u.role})</span><b style="color:red; cursor:pointer;" onclick="onDeleteUser('${u.id}')">×</b></div>`).join('');
-  }
-
-  async function onAddUser() {
-    await callGas('saveUser', { sn: currentSchoolNo, id: document.getElementById('u-id').value, pw: document.getElementById('u-pw').value, role: document.getElementById('u-role').value });
-    loadUsers();
-  }
-
-  async function onDeleteUser(id) {
-    if(confirm("削除しますか？")) { await callGas('deleteUser', { sn: currentSchoolNo, id }); loadUsers(); }
-  }
-
-  async function onAddClass() {
-    await callGas('addClass', { sn: currentSchoolNo, n: document.getElementById('nc-name').value });
+  async function onAddTask() {
+    const date = document.getElementById('t-date').value;
+    const sub = document.getElementById('t-sub').value;
+    const con = document.getElementById('t-con').value;
+    const cl = document.getElementById('t-class').value;
+    await call('saveTask', { sn: currentSn, date, sub, con, cl });
     refresh();
   }
 
-  async function doSetup() {
-    const res = await callGas('processInitialSetup', { schoolName: document.getElementById('s-name').value, adminId: document.getElementById('s-id').value, adminPw: document.getElementById('s-pw').value });
-    document.getElementById('res-sn').innerText = res.schoolNumber;
-    showSection('complete');
+  async function onAddEntry(d, p) {
+    const s = prompt("科目名を入力してください");
+    if(!s) return;
+    const cl = document.getElementById('class-filter').value;
+    if(cl === "すべて") return alert("クラスを選択してください");
+    await call('saveEntry', { sn: currentSn, d, p, s, cl });
+    refresh();
   }
 
-  setInterval(() => { document.getElementById('digital-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+  async function onClearAll() {
+    if(confirm("全ての時間割・提出物データを削除しますか？")) {
+      await call('clearAllData', { sn: currentSn });
+      refresh();
+    }
+  }
+
+  async function onAddClass() {
+    const n = document.getElementById('nc-name').value;
+    await call('addClass', { sn: currentSn, n });
+    refresh();
+  }
+
+  function moveDate(n) { focusDate.setDate(focusDate.getDate() + n); render(); }
+
+  setInterval(() => {
+    document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+  }, 1000);
 </script>
 </body>
 </html>
