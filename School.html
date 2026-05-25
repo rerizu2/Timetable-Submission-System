@@ -1,241 +1,234 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --primary: #4285f4; --bg: #f0f4f8; --header-bg: #1e293b; --card-bg: #ffffff; --border: #e2e8f0; --pink: #db2777; }
-    #landing-box, #setup-box, #complete-box, #login-box, #app-box, .modal-overlay { display: none; }
+    :root { --primary: #4285f4; --bg: #f0f4f8; --header-bg: #1e293b; --border: #e2e8f0; --pink: #db2777; }
+    #setup-box, #complete-box, #login-box, #app-box, .modal-overlay { display: none; }
+    body { margin: 0; font-family: sans-serif; background: var(--bg); color: #475569; overflow: hidden; }
     
-    body { margin: 0; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; background: var(--bg); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: #475569; }
-    
-    /* サイドバーのカードスタイル */
-    .sidebar-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-    .sidebar-card label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #64748b; }
-    .sidebar-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #475569; display: flex; align-items: center; gap: 5px; }
-
-    /* 入力パーツ */
-    .input-ui { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-    .btn-blue-rect { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 8px; font-size: 14px; transition: 0.2s; }
-    .btn-blue-rect:hover { background: #2b6cb0; }
-    .btn-pink-rect { width: 100%; padding: 12px; background: #d53f8c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
-
-    /* レイアウト */
-    #app-box { width: 98%; height: 96vh; background: #f8fafc; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+    #app-box { width: 98vw; height: 96vh; margin: 2vh auto; background: #f8fafc; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
     .header { background: var(--header-bg); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; }
     .main-content { display: flex; flex: 1; overflow: hidden; }
     .sidebar { width: 300px; background: #f1f5f9; padding: 20px; overflow-y: auto; border-right: 1px solid var(--border); }
     .view-area { flex: 1; padding: 25px; overflow-y: auto; background: white; }
 
-    /* テーブル・カード */
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid var(--border); padding: 10px; text-align: center; }
-    th { background: #f8fafc; font-size: 12px; }
-    .card { padding: 8px; border-radius: 6px; border-left: 4px solid var(--primary); font-size: 12px; margin-bottom: 4px; background: #ebf8ff; text-align: left; cursor: pointer; }
-
+    .sidebar-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+    .sidebar-card label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #64748b; }
+    .input-ui { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+    .btn-blue-rect { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 8px; }
+    .btn-pink-rect { width: 100%; padding: 12px; background: var(--pink); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: none; justify-content: center; align-items: center; }
-    .modal { background: white; padding: 30px; border-radius: 20px; width: 500px; }
+    .modal { background: white; padding: 30px; border-radius: 20px; width: 600px; max-height: 90vh; overflow-y: auto; }
+    .time-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .time-table th, .time-table td { border: 1px solid #eee; padding: 8px; text-align: center; }
+    .time-input { width: 100%; padding: 5px; border: 1px solid #ddd; text-align: center; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+    .card { padding: 6px; border-radius: 4px; border-left: 4px solid var(--primary); background: #eff6ff; font-size: 11px; text-align: left; margin-bottom: 2px; }
+    .user-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
   </style>
 </head>
 <body>
 
-  <!-- ログイン等のボックス (省略せず維持) -->
-  <div id="landing-box" class="box-ui"><h2>TimeTable Pro</h2><button class="btn-blue-rect" onclick="showSection('setup')">新規校作成</button><button class="btn-blue-rect" style="background:#64748b;" onclick="showSection('login')">ログイン</button></div>
-  <div id="setup-box" class="box-ui"><h3>学校登録</h3><input type="text" id="s-school" class="input-ui" placeholder="学校名"><input type="text" id="s-admin-id" class="input-ui" placeholder="管理者ID"><input type="password" id="s-admin-pw" class="input-ui" placeholder="管理者PW"><button class="btn-blue-rect" onclick="doSetup()">作成</button></div>
-  <div id="complete-box" class="box-ui"><h3>作成完了</h3><h1 id="res-school-no">000000</h1><button class="btn-blue-rect" onclick="showSection('login')">ログインへ</button></div>
-  <div id="login-box" class="box-ui"><h3>ログイン</h3><input type="number" id="l-school-no" class="input-ui" placeholder="学校番号" oninput="handleSchoolNoInput(this.value)"><select id="l-role" class="input-ui" onchange="onRoleChange()"><option value="生徒">生徒</option><option value="教員">教員</option><option value="管理者">管理者</option></select><div id="uid-select-wrapper"><select id="uid-select" class="input-ui"></select></div><div id="uid-text-wrapper" style="display:none;"><input type="text" id="uid-text" class="input-ui" placeholder="ユーザーID"></div><input type="password" id="upw" class="input-ui" placeholder="パスワード"><button class="btn-blue-rect" onclick="doLogin()">ログイン</button></div>
+  <!-- 初期画面 -->
+  <div id="login-box" style="display:block; width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <h2>TimeTable Pro</h2>
+    <input type="number" id="l-sn" class="input-ui" placeholder="学校番号">
+    <input type="text" id="l-id" class="input-ui" placeholder="ユーザーID">
+    <input type="password" id="l-pw" class="input-ui" placeholder="パスワード">
+    <button class="btn-blue-rect" onclick="doLogin()">ログイン</button>
+    <p style="font-size:12px; color:gray; cursor:pointer;" onclick="showSection('setup')">新規学校登録はこちら</p>
+  </div>
 
-  <!-- メインアプリ画面 -->
+  <div id="setup-box" style="width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center;">
+    <h3>新規校作成</h3>
+    <input type="text" id="s-name" class="input-ui" placeholder="学校名">
+    <input type="text" id="s-id" class="input-ui" placeholder="管理者ID">
+    <input type="password" id="s-pw" class="input-ui" placeholder="管理者PW">
+    <button class="btn-blue-rect" onclick="doSetup()">作成</button>
+  </div>
+
+  <div id="complete-box" style="width:350px; margin:100px auto; background:white; padding:40px; border-radius:20px; text-align:center;">
+    <h3>作成完了</h3>
+    <h1 id="res-sn" style="color:var(--primary)">000000</h1>
+    <button class="btn-blue-rect" onclick="location.reload()">ログインへ</button>
+  </div>
+
+  <!-- メインアプリ -->
   <div id="app-box">
     <div class="header">
-      <div style="font-size:14px;"><b id="h-school-name">---</b> <small id="h-school-no">No.---</small></div>
-      <div id="digital-clock" style="font-family:monospace; font-size:18px;">00:00:00</div>
+      <div><b id="h-school-name">---</b> <small id="h-school-no">No.---</small></div>
+      <div id="digital-clock" style="font-family:monospace; font-size:20px;">00:00:00</div>
       <div>
-        <button onclick="changeV('day')" style="cursor:pointer;">日</button>
-        <button onclick="changeV('week')" style="cursor:pointer;">週</button>
-        <button onclick="location.reload()" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px;">ログアウト</button>
+        <button onclick="window.open('https://script.google.com/macros/s/AKfycbxGhayJqPsF50e4F_l_Y-xtb4TdrqZTLfSjcySPs_UMy0AgxifL1r4uhMgpyZ0nWHzoQQ/exec','_blank')" style="background:#4f46e5; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">ポータル</button>
+        <button onclick="location.reload()" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-left:10px;">終了</button>
       </div>
     </div>
-
     <div class="main-content">
-      <!-- サイドバー (画像に基づき修正) -->
-      <div class="sidebar" id="admin-sidebar">
+      <div class="sidebar">
+        <div class="sidebar-card"><label>🎨 デザイン</label><select class="input-ui"><option>モダン</option></select></div>
+        <div class="sidebar-card"><label>表示クラス</label><select id="sidebar-class-filter" class="input-ui" onchange="render()"></select></div>
         
-        <!-- デザイン設定 -->
-        <div class="sidebar-card">
-          <label>🎨 デザイン</label>
-          <select id="theme-select" class="input-ui">
-            <option value="modern">モダン</option>
-            <option value="glass">グラス</option>
-          </select>
-        </div>
-
-        <!-- 表示クラス -->
-        <div class="sidebar-card">
-          <label>表示クラス</label>
-          <select id="sidebar-class-filter" class="input-ui" onchange="render();"></select>
-        </div>
-
-        <!-- 管理ボタン群 -->
         <button class="btn-blue-rect" onclick="openM('subject')">教科マネージャー</button>
-        <button class="btn-blue-rect" onclick="changeV('admin-status'); adminSubMode='matrix'; render();">名簿管理 (PW設定)</button>
-        <button class="btn-blue-rect">時刻設定</button>
-        <button class="btn-blue-rect">ユーザー管理</button>
+        <button class="btn-blue-rect" onclick="alert('名簿管理画面へ')">名簿管理 (PW設定)</button>
+        <button class="btn-blue-rect" onclick="openM('time')">時刻設定</button>
+        <button class="btn-blue-rect" onclick="openM('user')">ユーザー管理</button>
 
-        <hr style="opacity:0.2; margin:20px 0;">
-
-        <!-- 提出物登録 -->
         <div class="sidebar-card">
-          <div class="sidebar-title">▼提出物登録</div>
-          <input type="date" id="new-task-date" class="input-ui">
-          <input type="text" id="new-task-subject" class="input-ui" placeholder="科目名">
-          <input type="text" id="new-task-content" class="input-ui" placeholder="内容">
-          <select id="new-task-class" class="input-ui"></select>
-          <button class="btn-pink-rect" onclick="onAddTask()">登録</button>
+          <label>▼提出物登録</label>
+          <input type="date" id="task-date" class="input-ui">
+          <input type="text" id="task-sub" class="input-ui" placeholder="科目名">
+          <input type="text" id="task-con" class="input-ui" placeholder="内容">
+          <button class="btn-pink-rect" style="width:100%" onclick="onAddTask()">登録</button>
         </div>
 
-        <!-- 日付モード設定 -->
         <div class="sidebar-card">
-          <div class="sidebar-title">日付モード設定</div>
-          <input type="date" id="mode-date" class="input-ui">
-          <select id="mode-type" class="input-ui">
-            <option value="普通">普通</option>
-            <option value="短縮">短縮</option>
-            <option value="特別">特別</option>
-          </select>
-          <button class="btn-pink-rect" onclick="onApplyDateMode()">適用</button>
+          <label>クラス追加</label>
+          <input type="text" id="nc-name" class="input-ui" placeholder="1年A組">
+          <button class="btn-pink-rect" style="width:100%" onclick="onAddClass()">追加</button>
         </div>
-
-        <!-- クラス追加 -->
-        <div class="sidebar-card">
-          <div class="sidebar-title">クラス追加</div>
-          <input type="text" id="nc-name" class="input-ui" placeholder="例: 1年A組">
-          <button class="btn-pink-rect" onclick="onAddClass()">追加</button>
-        </div>
-
       </div>
-
       <div id="view-area" class="view-area"></div>
     </div>
   </div>
 
-  <!-- モーダル -->
-  <div class="modal-overlay" id="overlay-subject"><div class="modal"><h3>教科管理</h3><input type="text" id="new-sub-name" class="input-ui"><button class="btn-blue-rect" onclick="onAddSubject()">追加</button><div id="sub-list-box"></div><button onclick="closeM()">閉じる</button></div></div>
-  <div class="modal-overlay" id="overlay-edit"><div class="modal"><h3>時間割編集</h3><input type="text" id="m-subject" class="input-ui"><input type="text" id="m-room" class="input-ui"><button class="btn-blue-rect" onclick="onSave()">保存</button><button class="btn-blue-rect" style="background:red;" onclick="onDelete()">削除</button><button onclick="closeM()">閉じる</button></div></div>
+  <!-- 時刻設定モーダル -->
+  <div class="modal-overlay" id="overlay-time">
+    <div class="modal">
+      <h3>時刻設定</h3>
+      <label>限数:</label><input type="number" id="t-count" class="input-ui" value="6" oninput="genTimeRows()">
+      <table class="time-table">
+        <thead><tr><th>限</th><th>普</th><th>短</th><th>特</th></tr></thead>
+        <tbody id="time-tbody"></tbody>
+      </table>
+      <button class="btn-blue-rect" onclick="onSaveTime()">保存</button>
+      <button class="btn-pink-rect" style="background:gray;" onclick="closeM()">閉じる</button>
+    </div>
+  </div>
+
+  <!-- ユーザー管理モーダル -->
+  <div class="modal-overlay" id="overlay-user">
+    <div class="modal">
+      <h3>ユーザー管理</h3>
+      <input type="text" id="u-id" class="input-ui" placeholder="ID">
+      <input type="password" id="u-pw" class="input-ui" placeholder="PW">
+      <select id="u-role" class="input-ui"><option value="教員">教員</option><option value="管理者">管理者</option></select>
+      <button class="btn-blue-rect" onclick="onAddUser()">登録</button>
+      <div id="user-list" style="margin-top:20px;"></div>
+      <button class="btn-pink-rect" style="background:gray; margin-top:20px;" onclick="closeM()">閉じる</button>
+    </div>
+  </div>
 
 <script>
-  // --- GAS接続設定 (URLを書き換えてください) ---
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyzA1pj3nGIGOCyA16R8Fuwc-4bFpFCchD41WEAn5j1DKBajPApyNkYQK1BU7VoKEFZ-w/exec"; 
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby2Tst0FdmSfGAW62zO_vc6gsOBH4cHa52hnkTK2gtu2ieVHuQem8j8JW9MTWPM9aPcxw/exec"; 
 
   async function callGas(action, data = {}) {
     const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action, data }) });
     return await res.json();
   }
 
-  let db=[], appConfig={}, focusD=new Date(), mode='week', userRole="生徒", currentSchoolNo="", studentClass="", adminSubMode="menu";
+  let currentSchoolNo = "", appConfig = {}, db = [], focusD = new Date();
 
-  window.onload = async () => { 
-    const s = await callGas('getAppStatus');
-    showSection(s.isSetup ? 'login' : 'landing');
-    setInterval(() => {
-      const n=new Date(); document.getElementById('digital-clock').innerText=n.toLocaleTimeString();
-    }, 1000); 
-  };
-
-  function showSection(s){ document.querySelectorAll('.box-ui, #app-box, .modal-overlay').forEach(el=>el.style.display='none'); const t=document.getElementById(s+'-box'); if(t) t.style.display=(s==='app'?'flex':'block'); }
-  function openM(m, d, p){ document.getElementById('overlay-'+m).style.display='flex'; if(m==='edit'){ window.curE={d,p}; } }
-  function closeM(){ document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
-
-  async function handleSchoolNoInput(val){ 
-    if(val.length===6) {
-      const c = await callGas('getLoginConfig', { sn: val });
-      document.getElementById('uid-select').innerHTML=c.classList.map(x=>`<option value="${x}">${x}</option>`).join('');
-      document.getElementById('new-task-class').innerHTML=c.classList.map(x=>`<option value="${x}">${x}</option>`).join('');
-    }
+  function showSection(s){ 
+    document.querySelectorAll('#setup-box, #complete-box, #login-box, #app-box').forEach(el=>el.style.display='none');
+    document.getElementById(s+'-box').style.display='block';
+    if(s==='app') document.getElementById(s+'-box').style.display='flex';
   }
 
-  function onRoleChange(){ 
-    const r=document.getElementById('l-role').value;
-    document.getElementById('uid-text-wrapper').style.display=(r==='生徒'?'none':'block');
-    document.getElementById('uid-select-wrapper').style.display=(r==='生徒'?'block':'none');
-  }
-
-  async function doLogin(){
-    const sn=document.getElementById('l-school-no').value, r=document.getElementById('l-role').value, pw=document.getElementById('upw').value;
-    let id=(r==='生徒'?document.getElementById('uid-select').value : document.getElementById('uid-text').value);
-    const res = await callGas('checkLogin', { sNo: sn, id, pw, role: r });
-    if(res.success){ 
-      userRole=r; currentSchoolNo=sn; studentClass=(r==='生徒'?id:"");
-      document.getElementById('h-school-name').innerText=res.schoolName;
-      document.getElementById('h-school-no').innerText="No."+sn;
+  async function doLogin() {
+    const sn = document.getElementById('l-sn').value;
+    const id = document.getElementById('l-id').value;
+    const pw = document.getElementById('l-pw').value;
+    const res = await callGas('checkLogin', { sNo: sn, id, pw });
+    if(res.success) {
+      currentSchoolNo = sn;
       showSection('app');
-      applyPerms(); refresh();
+      document.getElementById('h-school-name').innerText = res.schoolName;
+      document.getElementById('h-school-no').innerText = "No." + sn;
+      refresh();
     } else alert(res.message);
   }
 
-  function applyPerms(){ 
-    document.getElementById('admin-sidebar').style.display=(userRole==='生徒'?'none':'block'); 
-  }
-
-  async function refresh(){
+  async function refresh() {
     appConfig = await callGas('getFullAppData', { sn: currentSchoolNo });
-    document.getElementById('sidebar-class-filter').innerHTML='<option value="すべて">すべて</option>'+appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
     db = await callGas('getScheduleData', { sn: currentSchoolNo });
+    document.getElementById('sidebar-class-filter').innerHTML = appConfig.classList.map(c=>`<option value="${c}">${c}</option>`).join('');
     render();
   }
 
-  function render(){
-    const area=document.getElementById('view-area'), f=document.getElementById('sidebar-class-filter').value;
-    if(mode==='admin-status') {
-       area.innerHTML = "<h2>管理機能</h2><p>ボタンから各設定を選択してください。</p>"; return;
+  function render() {
+    const f = document.getElementById('sidebar-class-filter').value;
+    const start = new Date(focusD); start.setDate(start.getDate()-start.getDay()+1);
+    let h = '<table><tr><th>限</th>';
+    for(let i=0; i<5; i++) {
+      let d = new Date(start); d.setDate(start.getDate()+i); h += `<th>${d.getMonth()+1}/${d.getDate()}</th>`;
     }
-    let h='<table><tr><th>限</th>';
-    const start=new Date(focusD); start.setDate(start.getDate()-start.getDay()+1);
-    for(let i=0;i<5;i++){ let d=new Date(start); d.setDate(start.getDate()+i); h+=`<th>${d.getMonth()+1}/${d.getDate()}</th>`; }
-    h+='</tr>';
-    for(let p=1;p<=appConfig.periodCount;p++){
-      h+=`<tr><td>${p}</td>`;
-      for(let i=0;i<5;i++){
-        let d=new Date(start); d.setDate(start.getDate()+i); let s=d.toLocaleDateString('sv-SE');
-        const its=db.filter(x=>x.date===s&&String(x.period)===String(p)&&(f==='すべて'||x.targetClass===f));
-        h+=`<td onclick="openM('edit','${s}','${p}')">${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td>`;
+    h += '</tr>';
+    for(let p=1; p<=appConfig.periodCount; p++) {
+      h += `<tr><td>${p}</td>`;
+      for(let i=0; i<5; i++) {
+        let d = new Date(start); d.setDate(start.getDate()+i); let s = d.toLocaleDateString('sv-SE');
+        const its = db.filter(x=>x.date===s && String(x.period)===String(p) && x.targetClass===f);
+        h += `<td>${its.map(it=>`<div class="card">${it.subject}</div>`).join('')}</td>`;
       }
-      h+='</tr>';
+      h += '</tr>';
     }
-    area.innerHTML = h+'</table>';
+    document.getElementById('view-area').innerHTML = h + '</table>';
   }
 
-  // 追加された機能のハンドラ
-  async function onAddTask(){
-    const date=document.getElementById('new-task-date').value;
-    const sub=document.getElementById('new-task-subject').value;
-    const con=document.getElementById('new-task-content').value;
-    const cl=document.getElementById('new-task-class').value;
-    await callGas('saveSubmissionMeta', { sn: currentSchoolNo, className: cl, subName: sub, list: [{subject: con, date: date}] });
-    alert("登録しました");
+  function openM(m) { 
+    document.getElementById('overlay-'+m).style.display='flex'; 
+    if(m==='time') genTimeRows();
+    if(m==='user') loadUsers();
+  }
+  function closeM() { document.querySelectorAll('.modal-overlay').forEach(el=>el.style.display='none'); }
+
+  function genTimeRows() {
+    const c = document.getElementById('t-count').value;
+    let h = '';
+    for(let i=1; i<=c; i++) h+=`<tr><td>${i}</td><td><input class="time-input t-n"></td><td><input class="time-input t-s"></td><td><input class="time-input t-x"></td></tr>`;
+    document.getElementById('time-tbody').innerHTML = h;
   }
 
-  async function onApplyDateMode(){
-    const date=document.getElementById('mode-date').value;
-    const mode=document.getElementById('mode-type').value;
-    // GAS側にsaveDateModeなどの関数がある前提
-    await callGas('saveDateMode', { sn: currentSchoolNo, date, mode });
-    alert("適用しました");
+  async function onSaveTime() {
+    const c = document.getElementById('t-count').value;
+    const n = Array.from(document.querySelectorAll('.t-n')).map(e=>e.value);
+    const s = Array.from(document.querySelectorAll('.t-s')).map(e=>e.value);
+    const x = Array.from(document.querySelectorAll('.t-x')).map(e=>e.value);
+    await callGas('saveTimeConfig', { sn: currentSchoolNo, count: c, normal: n, short: s, special: x });
+    alert("保存完了"); closeM(); refresh();
   }
 
-  async function onAddClass(){
-    const name = document.getElementById('nc-name').value;
-    await callGas('addClass', { sn: currentSchoolNo, n: name });
+  async function loadUsers() {
+    const list = await callGas('getUsers', { sn: currentSchoolNo });
+    document.getElementById('user-list').innerHTML = list.map(u=>`<div class="user-item"><span>${u.id} (${u.role})</span><b style="color:red; cursor:pointer;" onclick="onDeleteUser('${u.id}')">×</b></div>`).join('');
+  }
+
+  async function onAddUser() {
+    await callGas('saveUser', { sn: currentSchoolNo, id: document.getElementById('u-id').value, pw: document.getElementById('u-pw').value, role: document.getElementById('u-role').value });
+    loadUsers();
+  }
+
+  async function onDeleteUser(id) {
+    if(confirm("削除しますか？")) { await callGas('deleteUser', { sn: currentSchoolNo, id }); loadUsers(); }
+  }
+
+  async function onAddClass() {
+    await callGas('addClass', { sn: currentSchoolNo, n: document.getElementById('nc-name').value });
     refresh();
   }
 
-  async function onSave(){
-    await callGas('saveEntry', { sn: currentSchoolNo, d: window.curE.d, p: window.curE.p, s: document.getElementById('m-subject').value, r: document.getElementById('m-room').value, role: userRole, cl: document.getElementById('sidebar-class-filter').value });
-    closeM(); refresh();
+  async function doSetup() {
+    const res = await callGas('processInitialSetup', { schoolName: document.getElementById('s-name').value, adminId: document.getElementById('s-id').value, adminPw: document.getElementById('s-pw').value });
+    document.getElementById('res-sn').innerText = res.schoolNumber;
+    showSection('complete');
   }
 
-  function changeV(v){ mode=v; render(); }
+  setInterval(() => { document.getElementById('digital-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
 </html>
